@@ -109,14 +109,6 @@ window.onload = function() {
 		buildResult();
 	});
 
-	document.getElementById("btn-fullscreen").onclick = function() {
-		if (document.fullscreen) {
-			document.exitFullscreen();
-		} else {
-			document.documentElement.requestFullscreen();
-		}
-	}
-
 	bindButtons();
 
 	/*
@@ -150,20 +142,28 @@ document.onfullscreenchange = function() {
 }
 
 window.onkeydown = function(event) {
-	if (navigator.userAgent.indexOf('Mac') != -1) {
-		var modifierKey = 'metaKey';
-	} else {
-		var modifierKey = 'ctrlKey';
+	if (event.ctrlKey) {
+		var button = document.getElementById("btn-delete");
+		button.innerHTML = "delete_sweep";
 	}
 
-	console.log(event.code);
+	if (navigator.userAgent.indexOf('Mac') != -1) {
+		var commandKey = 'metaKey';
+	} else {
+		var commandKey = 'ctrlKey';
+	}
+
+	if (window.event.altleft) {
+		console.log('alt left');
+	}
+
 	switch (event.code) {
 		case 'Escape':
-			closeOptionsPanel();
+			closePanel();
 			break;
 
 		case 'KeyS':
-			if (event[modifierKey]) {
+			if (event[commandKey]) {
 				saveCode();
 				event.preventDefault();
 			}
@@ -171,7 +171,7 @@ window.onkeydown = function(event) {
 			break;
 
 		case 'Enter':
-			if (event[modifierKey]) {
+			if (event[commandKey]) {
 				if (tabs.selected == tabs[TAB_OUTPUT]) {
 					selectTab(tabs.previous);
 				} else {
@@ -183,41 +183,60 @@ window.onkeydown = function(event) {
 	}
 }
 
-window.onclick = function(event) {
-	var options = document.getElementById("options");
+window.onkeyup = function(event) {
+	var button = document.getElementById("btn-delete");
+	button.innerHTML = "delete";
+}
 
-	if (event.target == options) {
-		closeOptionsPanel();
+window.onclick = function(event) {
+	var panel = document.getElementById("panel");
+
+	if (event.target == panel) {
+		closePanel();
+	}
+}
+
+function attachClickHandler(id, handler) {
+	var button = document.getElementById(id);
+	if (button !== null) {
+		button.addEventListener("click", handler);
 	}
 }
 
 function bindButtons() {
-	var btnSave = document.getElementById("btn-save");
-	if (btnSave !== null) {
-		btnSave.addEventListener("click", function() {
-			saveCode();
-		});
-	}
+	attachClickHandler("btn-menu", function() {
+		showPanel();
+	});
 
-	var btnDelete = document.getElementById("btn-delete");
-	if (btnDelete !== null) {
-		btnDelete.addEventListener("click", function() {
-			if (tabs.selected !== null && tabs.selected.editor) {
-				tabs.selected.editor.setValue("");
-			}
-		});
-	}
+	attachClickHandler("btn-save", function() {
+		saveCode();
+	});
 
-	var btnDeleteAll = document.getElementById("btn-delete-all");
-	if (btnDeleteAll !== null) {
-		btnDeleteAll.addEventListener("click", function() {
+	attachClickHandler("btn-delete", function(event) {
+		if (event.ctrlKey) {
 			tabs[TAB_HTML].editor.setValue('');
 			tabs[TAB_CSS].editor.setValue('');
 			tabs[TAB_JS].editor.setValue('');
-		});
-	}
 
+			buildResult();
+		} else if (tabs.selected !== null && tabs.selected.editor) {
+			tabs.selected.editor.setValue("");
+		}
+	});
+
+	attachClickHandler("btn-fullscreen", function() {
+		if (document.fullscreen) {
+			document.exitFullscreen();
+		} else {
+			document.documentElement.requestFullscreen();
+		}
+	});
+
+	/*
+	 * Generic handler to return focus back to current editor
+	 */
 	var buttons = document.querySelectorAll(".btn");
+
 	for (var i = 0; i < buttons.length; i++) {
 		buttons[i].addEventListener("click", function() {
 			if (tabs.selected != null && tabs.selected.editor) {
@@ -226,42 +245,31 @@ function bindButtons() {
 		});
 	}
 
-	var btnMenu = document.getElementById("btn-menu");
-	if (btnMenu !== null) {
-		btnMenu.addEventListener("click", function(event) {
-			showOptionsPanel();
-			event.stopPropagation();
-		});
-	}
-
-	var btnCloseOptions = document.getElementById("btn-close-options");
-	if (btnCloseOptions !== null) {
-		btnCloseOptions.addEventListener("click", function() {
-			closeOptionsPanel();
-		});
-	}
+	attachClickHandler("btn-close-options", function() {
+		closePanel();
+	});
 }
 
-function showOptionsPanel() {
-	var options = document.getElementById("options");
-	if (options !== null) {
+function showPanel() {
+	var panel = document.getElementById("panel");
+	if (panel !== null) {
 		if (tabs.selected !== null && tabs.selected.editor) {
 			tabs.selected.editor.renderer.$cursorLayer.element.style.display = "none";
 		}
 
-		options.style.display = "block";
+		panel.style.display = "block";
 	}
 }
 
-function closeOptionsPanel() {
-	var options = document.getElementById("options");
-	if (options !== null) {
+function closePanel() {
+	var panel = document.getElementById("panel");
+	if (panel !== null) {
 		if (tabs.selected !== null && tabs.selected.editor) {
 			tabs.selected.editor.renderer.$cursorLayer.element.style.display = "block";
 			tabs.selected.editor.focus();
 		}
 
-		options.style.display = "none";
+		panel.style.display = "none";
 	}
 }
 
@@ -387,8 +395,6 @@ function buildJsSources() {
  * Builds result from html, css and js code
  */
 function buildResult() {
-	saveCode();
-
 	var template =
 		"<!DOCTYPE html>\n" +
 		"<html>\n" +
@@ -440,4 +446,5 @@ function buildResult() {
 
 	doc.onclick = window.onclick;
 	doc.onkeydown = window.onkeydown;
+	doc.onkeyup = window.onkeyup;
 }
