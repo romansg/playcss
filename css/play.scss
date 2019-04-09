@@ -1,0 +1,135 @@
+// Colores -
+$bgColor: gray;
+$barsColor: #4b6d9d; // primary color
+$barsTextColor: white; // primary text color
+$barItemHoverColor: #2c4f81;
+$barItemSelectedColor: #d4dce8;
+$barItemSelectedTextColor: #064e9f;
+
+// Medidas
+$barHeight: 32px;
+$tabWidth: 88px;
+$footerHeight: 24px;
+
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	margin: 0;
+	font-family: sans-serif;
+	font-size: 16px;
+	background-color: $bgColor;
+}
+
+#navbar {
+	height: $barHeight;
+	background-color: $barsColor;
+
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	ul {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		color: $barsTextColor;
+		font-family: Roboto;
+
+		li {
+			float: left;
+			height: 100%;
+			line-height: $barHeight;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		li.tab {
+			width: $tabWidth;
+		}
+
+		li.btn {
+			width: 44px;
+		}
+
+		li.separator {
+			margin: 6px 8px 0px;
+			height: 22px;
+			width: 2px;
+			background-color: white;
+		}
+
+		li.end {
+			float: right;
+		}
+
+		li:hover {
+			background-color: $barItemHoverColor;
+		}
+
+		li.tab.selected {
+			position: relative;
+			background: $barItemSelectedColor;
+			color: $barItemSelectedTextColor;
+		}
+
+		// A little trick to display an arrow below the selected tab
+		li.selected::after {
+			position: absolute;
+			margin-left: -8px;
+			left: 50%;
+			top: 100%;
+			content: '';
+			border-top: 8px solid #d4dce8;
+			border-left: 8px solid transparent;
+			border-right: 8px solid transparent;
+			z-index: 10;
+		}
+	}
+}
+
+#content {
+	position: relative;
+	flex-grow: 1;
+
+	> section.box {
+		display: none;
+		background-color: white;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		font-size: 14pt;
+		line-height: 1.1;
+	}
+
+	.ace_content {
+
+	}
+
+	#box-output {
+		background-color: #ebebeb;
+		// padding: 8px;
+		// padding-left: 43px;
+
+		> iframe {
+			border: none;
+			width: 100%;
+			height: 100%;
+		}
+	}
+}
+
+footer {
+	height: $footerHeight;
+	line-height: $footerHeight;
+	background-color: $barsColor;
+	text-align: center;
+	font-size: 0.8em;
+	font-style: italic;
+	color: $barsTextColor;
+	letter-spacing: 3px;
+}

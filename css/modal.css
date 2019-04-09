@@ -1,0 +1,46 @@
+.modal {
+	display: none;
+	position: absolute;
+	box-sizing: border-box;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,0.7);
+/*	filter:alpha(opacity=60);
+	-moz-opacity: 0.60;
+	opacity: 0.60;
+*/
+}
+
+.modal-content {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 70%;
+	height: 70%;
+	transform: translate(-50%, -50%);
+	background-color: #fefefe;
+	padding: 16px;
+	border: 1px solid #888;
+	border-radius: 7px;
+}
+
+.close {
+	position: absolute;
+	right: 16px;
+	top: 16px;
+	color: #aaaaaa;
+	/*float: right;*/
+	/*font-size: 28px;*/
+	font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
