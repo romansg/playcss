@@ -57,6 +57,14 @@ playCss = {
 	},
 }
 
+function getCommandKey() {
+	if (navigator.userAgent.indexOf('Mac') != -1) {
+		return "metaKey";
+	} else {
+		return "ctrlKey";
+	}
+}
+
 window.onload = function() {
 	/*
 	 * Setup tabs, boxes and editors
@@ -77,7 +85,7 @@ window.onload = function() {
 	 * Some tabs have an editor to edit content
 	 */
 	tabs[TAB_HTML].editor = buildEditor('box-html', 'html');
-	tabs[TAB_CSS].editor = buildEditor('box-css', 'scss');
+	tabs[TAB_CSS].editor = buildEditor('box-css', 'css');
 	tabs[TAB_JS].editor = buildEditor('box-js', 'javascript');
 
 	/*
@@ -142,20 +150,14 @@ document.onfullscreenchange = function() {
 }
 
 window.onkeydown = function(event) {
-	if (event.ctrlKey) {
+	var commandKey = getCommandKey();
+
+	if (event[commandKey]) {
 		var button = document.getElementById("btn-delete");
 		button.innerHTML = "delete_sweep";
 	}
 
-	if (navigator.userAgent.indexOf('Mac') != -1) {
-		var commandKey = 'metaKey';
-	} else {
-		var commandKey = 'ctrlKey';
-	}
-
-	if (window.event.altleft) {
-		console.log('alt left');
-	}
+	var commandKey = getCommandKey();
 
 	switch (event.code) {
 		case 'Escape':
@@ -213,7 +215,9 @@ function bindButtons() {
 	});
 
 	attachClickHandler("btn-delete", function(event) {
-		if (event.ctrlKey) {
+		var commandKey = getCommandKey();
+
+		if (event[commandKey]) {
 			tabs[TAB_HTML].editor.setValue('');
 			tabs[TAB_CSS].editor.setValue('');
 			tabs[TAB_JS].editor.setValue('');
